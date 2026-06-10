@@ -1,6 +1,6 @@
 # Thames Valley Park — Microsoft UK Campus in 3D
 
-An interactive 3D recreation of the Microsoft UK campus at Thames Valley Park, Reading (Building 1 – UK HQ, RG6 · 51.4615°N 0.9265°W), rendered entirely in the browser.
+An interactive 3D recreation of the Microsoft UK campus at Thames Valley Park, Reading (Building 1 – UK HQ, RG6 · 51.4615°N 0.9265°W), rendered entirely in the browser. Created with Anthropic's Claude Fable 5 model in GitHub Copilot.
 
 **Live site:** [tvp.guygregory.com](https://tvp.guygregory.com)
 
