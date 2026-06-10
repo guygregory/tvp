@@ -53,6 +53,10 @@
   #timeval{ font-size:12px; font-variant-numeric:tabular-nums; width:46px; text-align:right; }
 
   #help{ bottom:14px; right:14px; font-size:11px; color:var(--muted); max-width:200px; line-height:1.5; }
+  #ghlink{ top:14px; right:14px; padding:8px; display:flex; align-items:center; justify-content:center;
+    color:var(--text); transition:background .15s; }
+  #ghlink:hover{ background:rgba(255,255,255,.14); }
+  #ghlink svg{ display:block; }
   #loading{ position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
     background:#0a0f16; flex-direction:column; gap:14px; transition:opacity .6s; }
   #loading.done{ opacity:0; pointer-events:none; }
@@ -60,7 +64,21 @@
   #loading .mslogo i{ width:22px; height:22px; }
   #loading p{ color:var(--muted); font-size:13px; }
   .sq1{ background:#f25022; } .sq2{ background:#7fba00; } .sq3{ background:#00a4ef; } .sq4{ background:#ffb900; }
-  @media (max-width:640px){ #controls{ min-width:0; width:94vw; } #help{ display:none; } }
+  #ctrl-toggle{ display:none; align-self:center; }
+  @media (max-width:640px){
+    #controls{ min-width:0; width:94vw; padding:8px 10px; gap:7px; }
+    #help{ display:none; }
+    #ctrl-toggle{ display:block; }
+    #controls.collapsed .row{ display:none; }
+    #controls.collapsed{ width:auto; padding:6px 8px; background:var(--panel); }
+    #hud{ max-width:62vw; padding:9px 11px; }
+    #hud h1{ font-size:12.5px; }
+    #hud .sub{ font-size:10px; }
+    #wxline{ font-size:11.5px; gap:6px; }
+    #wxline .big{ font-size:17px; }
+    .row .lbl{ width:100%; }
+    button{ padding:4px 9px; font-size:11px; }
+  }
 </style>
 </head>
 <body>
@@ -84,6 +102,7 @@
 </div>
 
 <div id="controls" class="panel">
+  <button id="ctrl-toggle" aria-expanded="true">Hide controls</button>
   <div class="row">
     <span class="lbl">Time</span>
     <button id="btn-livetime" class="active">Live</button>
@@ -112,6 +131,12 @@
 </div>
 
 <div id="help" class="panel">Drag to orbit · scroll to zoom · right-drag to pan</div>
+
+<a id="ghlink" class="panel" href="https://github.com/guygregory/tvp" target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub" title="View source on GitHub">
+  <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+  </svg>
+</a>
 
 <script type="importmap">
 {
@@ -1350,6 +1375,18 @@ $('#btn-labels').addEventListener('click', (e)=>{
   const on = e.target.classList.toggle('active');
   labels.forEach(l => l.visible = on);
 });
+
+// Collapsible controls on small screens so the panel doesn't obscure the view
+{
+  const panel = $('#controls'), toggle = $('#ctrl-toggle');
+  const setCollapsed = (c)=>{
+    panel.classList.toggle('collapsed', c);
+    toggle.textContent = c ? 'Show controls' : 'Hide controls';
+    toggle.setAttribute('aria-expanded', String(!c));
+  };
+  toggle.addEventListener('click', ()=> setCollapsed(!panel.classList.contains('collapsed')));
+  if (window.matchMedia('(max-width:640px)').matches) setCollapsed(true);
+}
 
 // Single left-click on Building 1 → fly to the Building 1 camera.
 // Ignored when the user is dragging to orbit (pointer moved past a few px).
