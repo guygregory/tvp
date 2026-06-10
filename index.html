@@ -777,18 +777,24 @@ for (const L of [...LOTS, ...FRONT]){
   }
 }
 
-// keep trees out of the water and off the reserve road and Building 5 link
+// keep trees out of the water and off every road
 const WATER_BOXES = [
   { x0:-165, x1:-26, z0:-138, z1:-25 },   // main lake
   { x0:-252, x1:-198, z0:-28, z1:8 },     // small pond
 ];
-const reserveSamples = [
-  ...curveFrom(reserveRoadPts).getSpacedPoints(90),
-  ...curveFrom(b5LinkPts).getSpacedPoints(20),
+// [samples, clearance²] per road — clearance = half-width + margin, kept
+// below the 9 m avenue-tree offset so deliberate roadside trees survive
+const ROAD_CLEAR = [
+  [curveFrom(outerRoadPts).getSpacedPoints(220), 6.5**2],
+  [curveFrom(innerRoadPts).getSpacedPoints(220), 6**2],
+  [curveFrom(reserveRoadPts).getSpacedPoints(150), 8**2],
+  [curveFrom(b5LinkPts).getSpacedPoints(40), 8**2],
+  [curveFrom(rbPts).getSpacedPoints(60), 6.5**2],
 ];
 const treesFiltered = treePos.filter(p =>
   !WATER_BOXES.some(b => p[0]>b.x0 && p[0]<b.x1 && p[1]>b.z0 && p[1]<b.z1) &&
-  !reserveSamples.some(s => (p[0]-s.x)**2 + (p[1]-s.z)**2 < 64));
+  !ROAD_CLEAR.some(([samples, r2]) =>
+    samples.some(s => (p[0]-s.x)**2 + (p[1]-s.z)**2 < r2)));
 
 const trunkIM = new THREE.InstancedMesh(
   new THREE.CylinderGeometry(0.25, 0.4, 2.6, 6), MAT.trunk, treesFiltered.length);
